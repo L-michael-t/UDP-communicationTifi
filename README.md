@@ -96,6 +96,6 @@ risposta dal server: ho ricevuto: bella a tutti ragzzi
 ## 🚀 Possibili miglioramenti
 
 * Supporto per più client contemporaneamente
-* Server sempre in ascolto con ciclo `while`
+* Server sempre in ascolto con ciclo while
 * Migliore gestione degli errori
 * Sistema di messaggi più avanzato
