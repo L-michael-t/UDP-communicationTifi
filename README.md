@@ -7,14 +7,11 @@ Il client invia un messaggio al server e il server risponde confermando la ricez
 
 ## 📁 Struttura del progetto
 
-```
-.
-├── MainClient.java
-└── MainServer.java
-```
+ MainClient.java
+ MainServer.java
 
-* **MainClient.java** → invia un messaggio al server e riceve una risposta
-* **MainServer.java** → riceve il messaggio dal client e invia una risposta
+* **MainClient.java** invia un messaggio al server e riceve una risposta
+* **MainServer.java** riceve il messaggio dal client e invia una risposta
 
 ---
 
