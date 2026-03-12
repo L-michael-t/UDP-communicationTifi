@@ -1,41 +1,58 @@
+import java.io.IOException;
 import java.net.*;
 
 public class MainClient {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
-        DatagramSocket ds = new DatagramSocket();
-        ds.setSoTimeout(5000);
+        DatagramSocket ds = null;
+        try {
+            ds = new DatagramSocket();
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            ds.setSoTimeout(5000);
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
 
         String messaggio = "ciao server";
         byte[] buffer = messaggio.getBytes();
 
-        InetAddress serverAddress = InetAddress.getByName("localhost");
+        InetAddress serverAddress = null;
+        try {
+            serverAddress = InetAddress.getByName("localhost");
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
 
         DatagramPacket packet =
                 new DatagramPacket(buffer, buffer.length, serverAddress, 3989);
 
-        ds.send(packet);
+        try {
+            ds.send(packet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         byte[] rispostaBuffer = new byte[256];
         DatagramPacket rispostaPacket =
                 new DatagramPacket(rispostaBuffer, rispostaBuffer.length);
 
         try {
-
             ds.receive(rispostaPacket);
-
-            String risposta = new String(
-                    rispostaPacket.getData(),
-                    0,
-                    rispostaPacket.getLength()
-            );
-
-            System.out.println("Risposta unicast: " + risposta);
-
-        } catch (SocketTimeoutException e) {
-            System.out.println("Server non disponibile");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+        String risposta = new String(
+                rispostaPacket.getData(),
+                0,
+                rispostaPacket.getLength()
+        );
+
+        System.out.println("Risposta unicast: " + risposta);
 
         ds.close();
 
@@ -43,11 +60,25 @@ public class MainClient {
 
         int multicastPort = 4446;
 
-        MulticastSocket ms = new MulticastSocket(multicastPort);
+        MulticastSocket ms = null;
+        try {
+            ms = new MulticastSocket(multicastPort);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        InetAddress group = InetAddress.getByName("230.0.0.1");
+        InetAddress group = null;
+        try {
+            group = InetAddress.getByName("230.0.0.1");
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
 
-        ms.joinGroup(group);
+        try {
+            ms.joinGroup(group);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         byte[] multicastBuffer = new byte[256];
 
@@ -56,7 +87,11 @@ public class MainClient {
 
         System.out.println("In attesa messaggio multicast");
 
-        ms.receive(multicastPacket);
+        try {
+            ms.receive(multicastPacket);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         String multicastMsg = new String(
                 multicastPacket.getData(),
@@ -66,7 +101,11 @@ public class MainClient {
 
         System.out.println("Ricevuto multicast: " + multicastMsg);
 
-        ms.leaveGroup(group);
+        try {
+            ms.leaveGroup(group);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         ms.close();
     }
