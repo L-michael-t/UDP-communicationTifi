@@ -1,8 +1,3 @@
-/*
-javadoc
-il client se viene avviato controlla se ce il server avviato/disponibile in caso negativo scrive server non disponibile
-in caso avviato dopo il server comincia la comunicazione UDP
- */
 import java.net.*;
 
 public class MainClient {
@@ -10,7 +5,7 @@ public class MainClient {
     public static void main(String[] args) throws Exception {
 
         DatagramSocket ds = new DatagramSocket();
-        ds.setSoTimeout(5000); // attende massimo 5 secondi
+        ds.setSoTimeout(5000);
 
         String messaggio = "ciao server";
         byte[] buffer = messaggio.getBytes();
@@ -36,12 +31,43 @@ public class MainClient {
                     rispostaPacket.getLength()
             );
 
-            System.out.println("Risposta: " + risposta);
+            System.out.println("Risposta unicast: " + risposta);
 
         } catch (SocketTimeoutException e) {
-            System.out.println("Server non disponibile.");
+            System.out.println("Server non disponibile");
         }
 
         ds.close();
+
+// versione multicast
+
+        int multicastPort = 4446;
+
+        MulticastSocket ms = new MulticastSocket(multicastPort);
+
+        InetAddress group = InetAddress.getByName("230.0.0.1");
+
+        ms.joinGroup(group);
+
+        byte[] multicastBuffer = new byte[256];
+
+        DatagramPacket multicastPacket =
+                new DatagramPacket(multicastBuffer, multicastBuffer.length);
+
+        System.out.println("In attesa messaggio multicast");
+
+        ms.receive(multicastPacket);
+
+        String multicastMsg = new String(
+                multicastPacket.getData(),
+                0,
+                multicastPacket.getLength()
+        );
+
+        System.out.println("Ricevuto multicast: " + multicastMsg);
+
+        ms.leaveGroup(group);
+
+        ms.close();
     }
 }
